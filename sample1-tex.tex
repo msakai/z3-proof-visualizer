@@ -1,0 +1,49 @@
+\documentclass[a4paper,landscape]{jarticle}
+\usepackage{proof}
+\begin{document}
+\[
+\infer[\texttt{(\_ th-lemma arith farkas 3/2 1/2 1/2 1)}]{\mbox{\texttt{false}}}{
+  \infer[\texttt{mp}]{\mbox{\texttt{(<= x3 0.0)}}}{
+    \infer[\texttt{asserted}]{\mbox{\texttt{(>= (- x3) 0.0)}}}{}
+    &
+    \infer[\texttt{trans}]{\mbox{\texttt{(= (>= (- x3) 0.0) (<= x3 0.0))}}}{
+      \infer[\texttt{monotonicity}]{\mbox{\texttt{(= (>= (- x3) 0.0) (>= ($*$ (- 1.0) x3) 0.0))}}}{
+        \infer[\texttt{rewrite}]{\mbox{\texttt{(= (- x3) ($*$ (- 1.0) x3))}}}{}
+      }
+      &
+      \infer[\texttt{rewrite}]{\mbox{\texttt{(= (>= ($*$ (- 1.0) x3) 0.0) (<= x3 0.0))}}}{}
+    }
+  }
+  &
+  \infer[\texttt{mp}]{\mbox{\texttt{(<= (+ x1 ($*$ (- 1.0) x2)) 0.0)}}}{
+    \infer[\texttt{asserted}]{\mbox{\texttt{(>= (+ (- x1) x2) 0.0)}}}{}
+    &
+    \infer[\texttt{trans}]{\mbox{\texttt{(= (>= (+ (- x1) x2) 0.0) (<= (+ x1 ($*$ (- 1.0) x2)) 0.0))}}}{
+      \infer[\texttt{monotonicity}]{\mbox{\texttt{(= (>= (+ (- x1) x2) 0.0) (>= (+ ($*$ (- 1.0) x1) x2) 0.0))}}}{
+        \infer[\texttt{monotonicity}]{\mbox{\texttt{(= (+ (- x1) x2) (+ ($*$ (- 1.0) x1) x2))}}}{
+          \infer[\texttt{rewrite}]{\mbox{\texttt{(= (- x1) ($*$ (- 1.0) x1))}}}{}
+        }
+      }
+      &
+      \infer[\texttt{rewrite}]{\mbox{\texttt{(= (>= (+ ($*$ (- 1.0) x1) x2) 0.0) (<= (+ x1 ($*$ (- 1.0) x2)) 0.0))}}}{}
+    }
+  }
+  &
+  \infer[\texttt{asserted}]{\mbox{\texttt{(>= (+ x1 x2 x3) 1.0)}}}{}
+  &
+  \infer[\texttt{mp}]{\mbox{\texttt{(<= (+ x2 ($*$ (- 1.0) x3)) 0.0)}}}{
+    \infer[\texttt{asserted}]{\mbox{\texttt{(>= (+ (- x2) x3) 0.0)}}}{}
+    &
+    \infer[\texttt{trans}]{\mbox{\texttt{(= (>= (+ (- x2) x3) 0.0) (<= (+ x2 ($*$ (- 1.0) x3)) 0.0))}}}{
+      \infer[\texttt{monotonicity}]{\mbox{\texttt{(= (>= (+ (- x2) x3) 0.0) (>= (+ ($*$ (- 1.0) x2) x3) 0.0))}}}{
+        \infer[\texttt{monotonicity}]{\mbox{\texttt{(= (+ (- x2) x3) (+ ($*$ (- 1.0) x2) x3))}}}{
+          \infer[\texttt{rewrite}]{\mbox{\texttt{(= (- x2) ($*$ (- 1.0) x2))}}}{}
+        }
+      }
+      &
+      \infer[\texttt{rewrite}]{\mbox{\texttt{(= (>= (+ ($*$ (- 1.0) x2) x3) 0.0) (<= (+ x2 ($*$ (- 1.0) x3)) 0.0))}}}{}
+    }
+  }
+}
+\]
+\end{document}

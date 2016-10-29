@@ -1,0 +1,177 @@
+digraph {
+f1 [ shape = "ellipse", label = "c1" ];
+f2 [ shape = "ellipse", label = "c2" ];
+f3 [ shape = "ellipse", label = "c3" ];
+f4 [ shape = "ellipse", label = "c4" ];
+f5 [ shape = "ellipse", label = "false" ];
+f6 [ shape = "ellipse", label = "(<= x3 0.0)" ];
+f7 [ shape = "ellipse", label = "(<= (+ x1 (* (- 1.0) x2)) 0.0)" ];
+f8 [ shape = "ellipse", label = "(<= (+ x2 (* (- 1.0) x3)) 0.0)" ];
+f9 [ shape = "ellipse", label = "(= (+ (- x1) x2) (+ (* (- 1.0) x1) x2))" ];
+f10 [ shape = "ellipse", label = "(= (+ (- x2) x3) (+ (* (- 1.0) x2) x3))" ];
+f11 [ shape = "ellipse", label = "(= (- x1) (* (- 1.0) x1))" ];
+f12 [ shape = "ellipse", label = "(= (- x2) (* (- 1.0) x2))" ];
+f13 [ shape = "ellipse", label = "(= (- x3) (* (- 1.0) x3))" ];
+f14 [ shape = "ellipse", label = "(= (=> c1 (>= (+ x1 x2 x3) 1.0)) (or (not c1) (>= (+ x1 x2 x3) 1.0)))" ];
+f15 [ shape = "ellipse", label = "(= (=> c2 (>= (+ (* (- 1.0) x1) x2) 0.0)) (or (not c2) (>= (+ (* (- 1.0) x1) x2) 0.0)))" ];
+f16 [ shape = "ellipse", label = "(= (=> c2 (>= (+ (- x1) x2) 0.0)) (=> c2 (>= (+ (* (- 1.0) x1) x2) 0.0)))" ];
+f17 [ shape = "ellipse", label = "(= (=> c2 (>= (+ (- x1) x2) 0.0)) (or (not c2) (<= (+ x1 (* (- 1.0) x2)) 0.0)))" ];
+f18 [ shape = "ellipse", label = "(= (=> c2 (>= (+ (- x1) x2) 0.0)) (or (not c2) (>= (+ (* (- 1.0) x1) x2) 0.0)))" ];
+f19 [ shape = "ellipse", label = "(= (=> c3 (>= (+ (* (- 1.0) x2) x3) 0.0)) (or (not c3) (>= (+ (* (- 1.0) x2) x3) 0.0)))" ];
+f20 [ shape = "ellipse", label = "(= (=> c3 (>= (+ (- x2) x3) 0.0)) (=> c3 (>= (+ (* (- 1.0) x2) x3) 0.0)))" ];
+f21 [ shape = "ellipse", label = "(= (=> c3 (>= (+ (- x2) x3) 0.0)) (or (not c3) (<= (+ x2 (* (- 1.0) x3)) 0.0)))" ];
+f22 [ shape = "ellipse", label = "(= (=> c3 (>= (+ (- x2) x3) 0.0)) (or (not c3) (>= (+ (* (- 1.0) x2) x3) 0.0)))" ];
+f23 [ shape = "ellipse", label = "(= (=> c4 (>= (* (- 1.0) x3) 0.0)) (or (not c4) (>= (* (- 1.0) x3) 0.0)))" ];
+f24 [ shape = "ellipse", label = "(= (=> c4 (>= (- x3) 0.0)) (=> c4 (>= (* (- 1.0) x3) 0.0)))" ];
+f25 [ shape = "ellipse", label = "(= (=> c4 (>= (- x3) 0.0)) (or (not c4) (<= x3 0.0)))" ];
+f26 [ shape = "ellipse", label = "(= (=> c4 (>= (- x3) 0.0)) (or (not c4) (>= (* (- 1.0) x3) 0.0)))" ];
+f27 [ shape = "ellipse", label = "(= (>= (* (- 1.0) x3) 0.0) (<= x3 0.0))" ];
+f28 [ shape = "ellipse", label = "(= (>= (+ (* (- 1.0) x1) x2) 0.0) (<= (+ x1 (* (- 1.0) x2)) 0.0))" ];
+f29 [ shape = "ellipse", label = "(= (>= (+ (* (- 1.0) x2) x3) 0.0) (<= (+ x2 (* (- 1.0) x3)) 0.0))" ];
+f30 [ shape = "ellipse", label = "(= (>= (+ (- x1) x2) 0.0) (>= (+ (* (- 1.0) x1) x2) 0.0))" ];
+f31 [ shape = "ellipse", label = "(= (>= (+ (- x2) x3) 0.0) (>= (+ (* (- 1.0) x2) x3) 0.0))" ];
+f32 [ shape = "ellipse", label = "(= (>= (- x3) 0.0) (>= (* (- 1.0) x3) 0.0))" ];
+f33 [ shape = "ellipse", label = "(= (or (not c2) (>= (+ (* (- 1.0) x1) x2) 0.0)) (or (not c2) (<= (+ x1 (* (- 1.0) x2)) 0.0)))" ];
+f34 [ shape = "ellipse", label = "(= (or (not c3) (>= (+ (* (- 1.0) x2) x3) 0.0)) (or (not c3) (<= (+ x2 (* (- 1.0) x3)) 0.0)))" ];
+f35 [ shape = "ellipse", label = "(= (or (not c4) (>= (* (- 1.0) x3) 0.0)) (or (not c4) (<= x3 0.0)))" ];
+f36 [ shape = "ellipse", label = "(=> c1 (>= (+ x1 x2 x3) 1.0))" ];
+f37 [ shape = "ellipse", label = "(=> c2 (>= (+ (- x1) x2) 0.0))" ];
+f38 [ shape = "ellipse", label = "(=> c3 (>= (+ (- x2) x3) 0.0))" ];
+f39 [ shape = "ellipse", label = "(=> c4 (>= (- x3) 0.0))" ];
+f40 [ shape = "ellipse", label = "(>= (+ x1 x2 x3) 1.0)" ];
+f41 [ shape = "ellipse", label = "(or (not c1) (>= (+ x1 x2 x3) 1.0))" ];
+f42 [ shape = "ellipse", label = "(or (not c2) (<= (+ x1 (* (- 1.0) x2)) 0.0))" ];
+f43 [ shape = "ellipse", label = "(or (not c3) (<= (+ x2 (* (- 1.0) x3)) 0.0))" ];
+f44 [ shape = "ellipse", label = "(or (not c4) (<= x3 0.0))" ];
+p1 [ shape = "box", label = "(_ th-lemma arith farkas 3/2 1/2 1/2 1)" ];
+p2 [ shape = "box", label = "asserted" ];
+p3 [ shape = "box", label = "asserted" ];
+p4 [ shape = "box", label = "asserted" ];
+p5 [ shape = "box", label = "asserted" ];
+p6 [ shape = "box", label = "asserted" ];
+p7 [ shape = "box", label = "asserted" ];
+p8 [ shape = "box", label = "asserted" ];
+p9 [ shape = "box", label = "asserted" ];
+p10 [ shape = "box", label = "monotonicity" ];
+p11 [ shape = "box", label = "monotonicity" ];
+p12 [ shape = "box", label = "monotonicity" ];
+p13 [ shape = "box", label = "monotonicity" ];
+p14 [ shape = "box", label = "monotonicity" ];
+p15 [ shape = "box", label = "monotonicity" ];
+p16 [ shape = "box", label = "monotonicity" ];
+p17 [ shape = "box", label = "monotonicity" ];
+p18 [ shape = "box", label = "monotonicity" ];
+p19 [ shape = "box", label = "monotonicity" ];
+p20 [ shape = "box", label = "monotonicity" ];
+p21 [ shape = "box", label = "mp" ];
+p22 [ shape = "box", label = "mp" ];
+p23 [ shape = "box", label = "mp" ];
+p24 [ shape = "box", label = "mp" ];
+p25 [ shape = "box", label = "rewrite" ];
+p26 [ shape = "box", label = "rewrite" ];
+p27 [ shape = "box", label = "rewrite" ];
+p28 [ shape = "box", label = "rewrite" ];
+p29 [ shape = "box", label = "rewrite" ];
+p30 [ shape = "box", label = "rewrite" ];
+p31 [ shape = "box", label = "rewrite" ];
+p32 [ shape = "box", label = "rewrite" ];
+p33 [ shape = "box", label = "rewrite" ];
+p34 [ shape = "box", label = "rewrite" ];
+p35 [ shape = "box", label = "trans" ];
+p36 [ shape = "box", label = "trans" ];
+p37 [ shape = "box", label = "trans" ];
+p38 [ shape = "box", label = "trans" ];
+p39 [ shape = "box", label = "trans" ];
+p40 [ shape = "box", label = "trans" ];
+p41 [ shape = "box", label = "unit-resolution" ];
+p42 [ shape = "box", label = "unit-resolution" ];
+p43 [ shape = "box", label = "unit-resolution" ];
+p44 [ shape = "box", label = "unit-resolution" ];
+p1 -> f5
+f6 -> p1 [ label = "1" ];
+f7 -> p1 [ label = "2" ];
+f40 -> p1 [ label = "3" ];
+f8 -> p1 [ label = "4" ];
+p2 -> f1
+p3 -> f2
+p4 -> f3
+p5 -> f4
+p6 -> f36
+p7 -> f37
+p8 -> f38
+p9 -> f39
+p10 -> f9
+f11 -> p10 [ label = "1" ];
+p11 -> f10
+f12 -> p11 [ label = "1" ];
+p12 -> f16
+f30 -> p12 [ label = "1" ];
+p13 -> f20
+f31 -> p13 [ label = "1" ];
+p14 -> f24
+f32 -> p14 [ label = "1" ];
+p15 -> f30
+f9 -> p15 [ label = "1" ];
+p16 -> f31
+f10 -> p16 [ label = "1" ];
+p17 -> f32
+f13 -> p17 [ label = "1" ];
+p18 -> f33
+f28 -> p18 [ label = "1" ];
+p19 -> f34
+f29 -> p19 [ label = "1" ];
+p20 -> f35
+f27 -> p20 [ label = "1" ];
+p21 -> f41
+f36 -> p21 [ label = "1" ];
+f14 -> p21 [ label = "2" ];
+p22 -> f42
+f37 -> p22 [ label = "1" ];
+f17 -> p22 [ label = "2" ];
+p23 -> f43
+f38 -> p23 [ label = "1" ];
+f21 -> p23 [ label = "2" ];
+p24 -> f44
+f39 -> p24 [ label = "1" ];
+f25 -> p24 [ label = "2" ];
+p25 -> f11
+p26 -> f12
+p27 -> f13
+p28 -> f14
+p29 -> f15
+p30 -> f19
+p31 -> f23
+p32 -> f27
+p33 -> f28
+p34 -> f29
+p35 -> f17
+f18 -> p35 [ label = "1" ];
+f33 -> p35 [ label = "2" ];
+p36 -> f18
+f16 -> p36 [ label = "1" ];
+f15 -> p36 [ label = "2" ];
+p37 -> f21
+f22 -> p37 [ label = "1" ];
+f34 -> p37 [ label = "2" ];
+p38 -> f22
+f20 -> p38 [ label = "1" ];
+f19 -> p38 [ label = "2" ];
+p39 -> f25
+f26 -> p39 [ label = "1" ];
+f35 -> p39 [ label = "2" ];
+p40 -> f26
+f24 -> p40 [ label = "1" ];
+f23 -> p40 [ label = "2" ];
+p41 -> f6
+f44 -> p41 [ label = "1" ];
+f4 -> p41 [ label = "2" ];
+p42 -> f7
+f42 -> p42 [ label = "1" ];
+f2 -> p42 [ label = "2" ];
+p43 -> f8
+f43 -> p43 [ label = "1" ];
+f3 -> p43 [ label = "2" ];
+p44 -> f40
+f41 -> p44 [ label = "1" ];
+f1 -> p44 [ label = "2" ];
+}
