@@ -41,25 +41,30 @@ sexprBuilder (Atom t) = TB.fromText t
 sexprBuilder (Compound []) = TB.fromText "()"
 sexprBuilder (Compound (x:xs)) = TB.singleton '(' <> sexprBuilder x <> mconcat [TB.singleton ' ' <> sexprBuilder x | x <- xs] <> TB.singleton ')'
 
+showSExpr :: SExpr -> String
+showSExpr = TL.unpack . TB.toLazyText . sexprBuilder
+
 data Proof formula
   = Inference
   { infRule :: T.Text
   , infConclusion :: formula
   , infPremises :: [Proof formula]
+  , infAssumptions :: Set formula
   }
   deriving (Eq, Ord, Show)
 
 parseProof :: SExpr -> Proof SExpr
-parseProof = f Map.empty
+parseProof = inferAssumptions . f Map.empty
   where
     f :: Map T.Text SExpr -> SExpr -> Proof SExpr
     f env (Compound [Atom "let", Compound [Compound [Atom v, rhs]], body]) =
       f (Map.insert v rhs env) body
-    f env (Compound (rule : args)) = 
+    f env (Compound (rule : args)) =
       Inference
       { infRule = TL.toStrict $ TB.toLazyText (sexprBuilder rule)
       , infConclusion = expand env (last args)
       , infPremises = [f env arg | arg <- init args]
+      , infAssumptions = undefined
       }
     f env (Atom x) =
       case Map.lookup x env of
@@ -73,10 +78,29 @@ parseProof = f Map.empty
         Nothing -> Atom x
     expand env (Compound xs) = Compound $ map (expand env) xs
 
+inferAssumptions :: Proof SExpr -> Proof SExpr
+inferAssumptions p = (\q -> infAssumptions q `seq` q) $
+  case infRule p of
+    "hypothesis" -> p{ infAssumptions = Set.singleton (infConclusion p) }
+    "lemma"
+      | assumptionsToDischarge `Set.isSubsetOf` premiseAssumptions ->
+          p'{ infAssumptions = premiseAssumptions `Set.difference` assumptionsToDischarge }
+      | otherwise -> error $ "should not happen: " -- ++ (showSExpr $ infConclusion p) ++ " VS " ++ show (Set.map showSExpr premiseAssumptions)
+    _ -> p'{ infAssumptions = premiseAssumptions }
+  where
+    p' = p{ infPremises = [inferAssumptions q | q <- infPremises p] }
+    premiseAssumptions = Set.unions [infAssumptions q | q <- infPremises p']
+    assumptionsToDischarge =
+      case infConclusion p of
+        Compound (Atom "or" : xs) -> Set.fromList [neg x | x <- xs]
+        x -> Set.singleton (neg x)
+    neg (Compound [Atom "not", x]) = x
+    neg x = Compound [Atom "not", x]
+
 toTex :: Proof SExpr -> TB.Builder
 toTex proof = f 0 proof
   where
-    f level (Inference rule conclusion premises) =
+    f level Inference{ infRule = rule, infConclusion = conclusion, infPremises = premises } =
         indent <> "\\infer[" <> escapeText rule <> "]{" <> escapeSExprMath conclusion <> "}" <>
         (if null premises
          then "{}"
@@ -99,35 +123,35 @@ toTex proof = f 0 proof
 toGraphViz :: Proof SExpr -> TB.Builder
 toGraphViz proof =
   "digraph {\n" <>
-  mconcat [ TB.fromText name <> " [ shape = \"ellipse\", label = \"" <> sexprBuilder f <> "\" ];\n" | (f,name) <- Map.toList formulaTable ] <> 
-  mconcat [ TB.fromText name <> " [ shape = \"box\", label = \"" <> TB.fromText (infRule p) <> "\" ];\n" | (p,name) <- Map.toList subproofTable ] <> 
+  mconcat [ TB.fromText name <> " [ shape = \"ellipse\", label = \"" <> sexprBuilder f <> "\" ];\n" | ((f,_),name) <- Map.toList formulaTable ] <>
+  mconcat [ TB.fromText name <> " [ shape = \"box\", label = \"" <> TB.fromText (infRule p) <> "\" ];\n" | (p,name) <- Map.toList subproofTable ] <>
   mconcat
-    [ TB.fromText infNodeName <> " -> " <> TB.fromText (formulaTable Map.! con) <> "\n" <>
+    [ TB.fromText name <> " -> " <> TB.fromText (formulaTable Map.! (infConclusion p, infAssumptions p)) <> "\n" <>
       mconcat
-        [ TB.fromText (formulaTable Map.! infConclusion x) <> " -> " <> TB.fromText infNodeName <>
+        [ TB.fromText (formulaTable Map.! (infConclusion x, infAssumptions x)) <> " -> " <> TB.fromText name <>
           " [ label = \"" <> TB.fromString (show i) <> "\" ];\n"
-        | (x,i) <- zip premises [(1::Int)..]
+        | (x,i) <- zip (infPremises p) [(1::Int)..]
         ]
-    | (Inference _rule con premises, infNodeName) <- Map.toList subproofTable
-    ] <>   
+    | (p, name) <- Map.toList subproofTable
+    ] <>
   "}\n"
   where
-    formulas :: Set SExpr
+    formulas :: Set (SExpr, Set SExpr)
     formulas = f proof
       where
-        f (Inference _ con xs) = Set.insert con $ Set.unions (map f xs)
+        f p = Set.insert (infConclusion p, infAssumptions p) $ Set.unions (map f (infPremises p))
 
     subproofs :: Set (Proof SExpr)
     subproofs = f proof
       where
-        f x@(Inference _ _ xs) = Set.insert x $ Set.unions (map f xs)
+        f x = Set.insert x $ Set.unions (map f (infPremises x))
 
-    formulaTable :: Map SExpr T.Text
+    formulaTable :: Map (SExpr, Set SExpr) T.Text
     formulaTable = Map.fromAscList $ zip (Set.toAscList formulas) ["f" <> T.pack (show i) | i <- [(1::Int)..]]
 
     subproofTable :: Map (Proof SExpr) T.Text
     subproofTable = Map.fromAscList $ zip (Set.toAscList subproofs) ["p" <> T.pack (show i) | i <- [(1::Int)..]]
-              
+
 main :: IO ()
 main = do
   [fname] <- getArgs
