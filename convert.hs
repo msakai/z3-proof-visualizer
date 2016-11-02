@@ -44,6 +44,9 @@ sexprBuilder (Compound (x:xs)) = TB.singleton '(' <> sexprBuilder x <> mconcat [
 showSExpr :: SExpr -> String
 showSExpr = TL.unpack . TB.toLazyText . sexprBuilder
 
+showSExprText :: SExpr -> T.Text
+showSExprText = TL.toStrict . TB.toLazyText . sexprBuilder
+
 data Proof formula
   = Inference
   { infRule :: T.Text
@@ -61,7 +64,7 @@ parseProof = inferAssumptions . f Map.empty
       f (Map.insert v rhs env) body
     f env (Compound (rule : args)) =
       Inference
-      { infRule = TL.toStrict $ TB.toLazyText (sexprBuilder rule)
+      { infRule = showSExprText rule
       , infConclusion = expand env (last args)
       , infPremises = [f env arg | arg <- init args]
       , infAssumptions = undefined
@@ -118,7 +121,7 @@ toTex proof = f 0 proof
         g c = T.singleton c
 
     escapeSExprMath :: SExpr -> TB.Builder
-    escapeSExprMath x = "\\mbox{" <> escapeText (TL.toStrict $ TB.toLazyText $ sexprBuilder x) <> "}"
+    escapeSExprMath x = "\\mbox{" <> escapeText (showSExprText x) <> "}"
 
 toGraphViz :: Proof SExpr -> TB.Builder
 toGraphViz proof =
