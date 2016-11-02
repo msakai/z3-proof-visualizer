@@ -1,0 +1,12 @@
+(set-option :produce-proofs true)
+(set-logic QF_LIA)
+(declare-fun x1 () Int)
+(declare-fun x2 () Int)
+(declare-fun x3 () Int)
+(declare-fun x4 () Int)
+(assert (= (+ x1 x2) 8))
+(assert (= x1 (* 3 x3))) 
+(assert (= x2 (* 6 x4)))
+(check-sat)
+(get-proof)
+
