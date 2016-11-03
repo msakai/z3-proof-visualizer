@@ -5,10 +5,11 @@ module Main where
 import Control.Applicative
 import Control.Exception
 import Control.Monad
-import Data.List (intersperse)
+import Data.List (intersperse, sortBy)
 import Data.Map (Map)
 import qualified Data.Map as Map
 import Data.Monoid
+import Data.Ord
 import Data.Set (Set)
 import qualified Data.Set as Set
 import Data.String
@@ -56,6 +57,9 @@ data Proof formula
   }
   deriving (Eq, Ord, Show)
 
+proofSize :: Proof f -> Int
+proofSize p = 1 + sum (map proofSize (infPremises p))
+
 parseProof :: SExpr -> Proof SExpr
 parseProof = inferAssumptions . f Map.empty
   where
@@ -101,17 +105,23 @@ inferAssumptions p = (\q -> infAssumptions q `seq` q) $
     neg x = Compound [Atom "not", x]
 
 toTex :: Proof SExpr -> TB.Builder
-toTex proof = f 0 proof
+toTex proof = 
+    mconcat ["\\[\n" <> f 0 p <> "\\]\n" | (p,i) <- subproofsWithMultipleOccurences] <>
+    ("\\[\n" <> f 0 proof <> "\\]\n")  
   where
-    f level Inference{ infRule = rule, infConclusion = conclusion, infPremises = premises } =
-        indent <> "\\infer[" <> escapeText rule <> "]{" <> escapeSExprMath conclusion <> "}" <>
-        (if null premises
-         then "{}"
-         else "{\n" <> mconcat (intersperse (indent' <> "&\n") [f (level + 1) p | p <- premises]) <> indent <> "}") <>
-        "\n"
-      where
-        indent = TB.fromString $ replicate (level * 2) ' '
-        indent' = TB.fromString $ replicate ((level + 1) * 2) ' '
+    f lv p@Inference{ infConclusion = conclusion }
+      | lv > 0
+      , Just i <- Map.lookup p subproofsWithMultipleOccurencesMap =
+          indent lv <> "\\deduce{" <> escapeSExprMath conclusion <> "}{(" <> TB.fromString (show i) <> ")}\n"
+    f lv Inference{ infRule = rule, infConclusion = conclusion, infPremises = premises } =
+      indent lv <> "\\infer[" <> escapeText rule <> "]{" <> escapeSExprMath conclusion <> "}" <>
+      (if null premises
+       then "{}"
+       else "{\n" <> mconcat (intersperse (indent (lv+1) <> "&\n") [f (lv+1) p | p <- premises]) <> indent lv <> "}") <>
+      "\n"
+
+    indent :: Int -> TB.Builder
+    indent level = TB.fromString $ replicate (level * 2) ' '
 
     escapeText :: T.Text -> TB.Builder
     escapeText x = "\\texttt{" <> TB.fromText (T.concatMap g x) <> "}"
@@ -122,6 +132,21 @@ toTex proof = f 0 proof
 
     escapeSExprMath :: SExpr -> TB.Builder
     escapeSExprMath x = "\\mbox{" <> escapeText (showSExprText x) <> "}"
+
+    subproofsWithMultipleOccurencesMap :: Map (Proof SExpr) Int
+    subproofsWithMultipleOccurencesMap = Map.fromList subproofsWithMultipleOccurences
+
+    subproofsWithMultipleOccurences :: [(Proof SExpr, Int)]
+    subproofsWithMultipleOccurences = zip (sortBy (comparing proofSize) ys) [1..]
+      where
+        ys = [p | (p,xs) <- Map.toList subproofOccurences, Set.size xs > 1, proofSize p > 1]
+
+        subproofOccurences :: Map (Proof SExpr) (Set (Proof SExpr, Int))
+        subproofOccurences = f proof
+          where
+            f x = Map.unionsWith Set.union (map f (infPremises x)) `Map.union`
+                  Map.fromListWith Set.union [(y, Set.singleton (x,i)) | (i,y) <- zip [1..] (infPremises x)]
+
 
 toGraphViz :: Proof SExpr -> TB.Builder
 toGraphViz proof =
